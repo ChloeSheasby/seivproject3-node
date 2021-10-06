@@ -24,6 +24,8 @@ app.get("/", (req, res) => {
 });
 
 require("./routes/course.routes.js")(app);
+require("./routes/degree_courses.routes.js")(app);
+require("./routes/degree.routes.js")(app);
 
 // set port, listen for requests
 app.listen(3000, () => {

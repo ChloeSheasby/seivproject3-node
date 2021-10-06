@@ -6,7 +6,7 @@ const Course = function(course) {
   this.courseNum = course.courseNum;
   this.level = course.level;
   this.hours = course.hours;
-  this.name = course.name;
+  this.courseName = course.courseName;
   this.description = course.description;
 };
 
@@ -84,9 +84,9 @@ Course.getSome = (start, length, result) => {
 
 Course.updateById = (courseID, course, result) => {
   sql.query(
-    "UPDATE courses SET dept = ?, courseNum = ?, level = ?, hours = ?, name = ?, description = ? WHERE courseID = ?",
+    "UPDATE courses SET dept = ?, courseNum = ?, level = ?, hours = ?, courseName = ?, description = ? WHERE courseID = ?",
     //TODO - Update this!!!
-    [course.dept, course.courseNum, course.level, course.hours, course.name, course.description, courseID],
+    [course.dept, course.courseNum, course.level, course.hours, course.courseName, course.description, courseID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
