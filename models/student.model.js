@@ -83,7 +83,7 @@ Student.getSome = (start, length, result) => {
 
 Student.updateById = (studentID, student, result) => {
   sql.query(
-    "UPDATE student SET degreeID = ?, advisorID = ?, fName = ?, lName = ?, email = ? WHERE studentID = ?",
+    "UPDATE students SET degreeID = ?, advisorID = ?, fName = ?, lName = ?, email = ? WHERE studentID = ?",
     //TODO - Update this!!!
     [student.degreeID, student.advisorID, student.fName, student.lName, student.email, studentID],
     (err, res) => {
