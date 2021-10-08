@@ -11,7 +11,13 @@ exports.create = (req, res) => {
   
     // Create a Advisor
     const advisor = new Advisor({
-      advisorID: req.body.advisorID
+      advisorID: req.body.advisorID,
+      fName: req.body.fName,
+      lName: req.body.lName,
+      email: req.body.email,
+      dept: req.body.dept,
+      lastUpdDate: req.body.lastUpdDate,
+      lastUpdBy: req.body.lastUpdBy
     });
   
     // Save Advisor in the database
