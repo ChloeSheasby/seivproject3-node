@@ -16,7 +16,7 @@ exports.create = (req, res) => {
       courseNum: req.body.courseNum,
       level: req.body.level,
       hours: req.body.hours,
-      name: req.body.name,
+      courseName: req.body.courseName,
       description: req.body.description
     });
   

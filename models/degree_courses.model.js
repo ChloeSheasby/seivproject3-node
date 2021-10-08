@@ -14,13 +14,13 @@ Degree_courses.create = (newDegree_courses, result) => {
       return;
     }
 
-    console.log("created degree_courses: ", { degree_coursesID: res.insertId, ...newDegree_courses });
-    result(null, { degree_coursesID: res.insertId, ...newDegree_courses });
+    console.log("created degree_courses: ", { degreeCourseID: res.insertId, ...newDegree_courses });
+    result(null, { degreeCourseID: res.insertId, ...newDegree_courses });
   });
 };
 
-Degree_courses.findById = (degree_coursesID, result) => {
-  sql.query(`SELECT * FROM degree_courses WHERE degree_coursesID = ${degree_coursesID}`, (err, res) => {
+Degree_courses.findById = (degreeCourseID, result) => {
+  sql.query(`SELECT * FROM degree_courses WHERE degreeCourseID = ${degreeCourseID}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -33,7 +33,7 @@ Degree_courses.findById = (degree_coursesID, result) => {
       return;
     }
 
-    // not found Degree_courses with the degree_coursesID
+    // not found Degree_courses with the degreeCourseID
     result({ kind: "not_found" }, null);
   });
 };
@@ -78,11 +78,11 @@ Degree_courses.getSome = (start, length, result) => {
   }
 };
 
-Degree_courses.updateById = (degree_coursesID, degree_courses, result) => {
+Degree_courses.updateById = (degreeCourseID, degree_courses, result) => {
   sql.query(
-    "UPDATE degree_courses SET degreeID = ?, courseID = ? WHERE degree_coursesID = ?",
+    "UPDATE degree_courses SET degreeID = ?, courseID = ? WHERE degreeCourseID = ?",
     //TODO - Update this!!!
-    [degree_courses.degreeID, degree_courses.courseID, degree_coursesID],
+    [degree_courses.degreeID, degree_courses.courseID, degreeCourseID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -91,19 +91,19 @@ Degree_courses.updateById = (degree_coursesID, degree_courses, result) => {
       }
 
       if (res.affectedRows == 0) {
-        // not found Degree_courses with the degree_coursesID
+        // not found Degree_courses with the degreeCourseID
         result({ kind: "not_found" }, null);
         return;
       }
 
-      console.log("updated degree_courses: ", { degree_coursesID: degree_coursesID, ...degree_courses });
-      result(null, { degree_coursesID: degree_coursesID, ...degree_courses });
+      console.log("updated degree_courses: ", { degreeCourseID: degreeCourseID, ...degree_courses });
+      result(null, { degreeCourseID: degreeCourseID, ...degree_courses });
     }
   );
 };
 
-Degree_courses.remove = (degree_coursesID, result) => {
-  sql.query("DELETE FROM degree_courses WHERE degree_coursesID = ?", degree_coursesID, (err, res) => {
+Degree_courses.remove = (degreeCourseID, result) => {
+  sql.query("DELETE FROM degree_courses WHERE degreeCourseID = ?", degreeCourseID, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -111,12 +111,12 @@ Degree_courses.remove = (degree_coursesID, result) => {
     }
 
     if (res.affectedRows == 0) {
-      // not found Degree_courses with the degree_coursesID
+      // not found Degree_courses with the degreeCourseID
       result({ kind: "not_found" }, null);
       return;
     }
 
-    console.log("deleted degree_courses with degree_coursesID: ", degree_coursesID);
+    console.log("deleted degree_courses with degreeCourseID: ", degreeCourseID);
     result(null, res);
   });
 };

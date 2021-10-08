@@ -81,9 +81,9 @@ Degree.getSome = (start, length, result) => {
 
 Degree.updateById = (degreeID, degree, result) => {
   sql.query(
-    "UPDATE degrees SET dept = ?, degree = ?, hours = ? WHERE degreeID = ?",
+    "UPDATE degrees SET dept = ?, degreeName = ?, totalHours = ? WHERE degreeID = ?",
     //TODO - Update this!!!
-    [degree.dept, degree.degree, degree.hours, degreeID],
+    [degree.dept, degree.degreeName, degree.totalHours, degreeID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
