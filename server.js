@@ -30,6 +30,6 @@ require("./routes/student.routes.js")(app);
 require("./routes/student_courses.routes.js")(app);
 
 // set port, listen for requests
-app.listen(3000, () => {
-  console.log("Server is running on port 3000.");
+app.listen(3001, () => {
+  console.log("Server is running on port 3001.");
 });
