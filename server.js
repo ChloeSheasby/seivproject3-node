@@ -28,6 +28,8 @@ require("./routes/degree_courses.routes.js")(app);
 require("./routes/degree.routes.js")(app);
 require("./routes/student.routes.js")(app);
 require("./routes/student_courses.routes.js")(app);
+require("./routes/semester.routes.js")(app);
+require("./routes/advisor.routes.js")(app);
 
 // set port, listen for requests
 app.listen(3000, () => {
