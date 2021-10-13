@@ -11,7 +11,6 @@ exports.create = (req, res) => {
   
     // Create a Advisor
     const advisor = new Advisor({
-      advisorID: req.body.advisorID,
       fName: req.body.fName,
       lName: req.body.lName,
       email: req.body.email,
