@@ -6,6 +6,7 @@ const Advisor = function(advisor) {
   this.lName = advisor.lName;
   this.email = advisor.email;
   this.dept = advisor.dept;
+  this.role = advisor.role;
   this.lastUpdDate = advisor.lastUpdDate;
   this.lastUpdBy = advisor.lastUpdBy;
 };
@@ -25,6 +26,25 @@ Advisor.create = (newAdvisor, result) => {
 
 Advisor.findById = (advisorID, result) => {
   sql.query(`SELECT * FROM advisors WHERE advisorID = ${advisorID}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found advisor: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found Advisor with the advisorID
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Advisor.findByEmail = (email, result) => {
+  sql.query(`SELECT * FROM advisors WHERE email = ${email}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
