@@ -1,6 +1,7 @@
 const Advisor = require("../models/advisor.model.js");
-var jwt = require('jsonwebtoken');
 const Student = require("../models/student.model.js");
+const Session = require("../models/session.model.js");
+var jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
     const {OAuth2Client} = require('google-auth-library');
@@ -31,8 +32,8 @@ exports.login = async (req, res) => {
             user.email = advisor.email;
             user.advisorID = advisor.advisorID;
             user.studentID = null;
-            user.userID = advisor.id;
-            user.firstName = advisor.firstName;
+            user.userID = advisor.advisorID;
+            user.fName = advisor.fName;
             user.roles = advisor.roles;
             foundUser = true;
         }
@@ -42,17 +43,53 @@ exports.login = async (req, res) => {
     })
 
     await Student.findByEmail({
+        where : {email:email}
+    })
+    .then(data => {
+        if (data != null) {
+            let student = data.dataValues;
+            token = jwt.sign({ id:student.email }, authconfig.secret, {expiresIn: 86400});
+            user.email = student.email;
+            user.advisorID = null;
+            user.studentID = student.studentID;
+            user.userID = student.studentID;
+            user.fName = student.fName;
+            user.roles = "student";
+            foundUser = true;
+        }
+    })
+    .catch( {
 
     })
 
+    let findExpirationDate = new Date() + 1;
     const session = {
         token : token,
         email : user.email,
         advisorID : user.advisorID,
         studentID : user.studentID,
-        userID : user.ID,
-        roles : user.roles
+        userID : user.userID,
+        expirationDate : findExpirationDate
     }
+
+    const userInfo = {
+        token : token,
+        email : user.email,
+        roles : user.roles,
+        userID : user.userID,
+        studentID : user.studentID,
+        advisorID : user.advisorID
+    }
+
+    // Save Session in the database
+    Session.create(session, (err, data) => {
+        if (err)
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the Session."
+          });
+        else res.send(userInfo);
+      });
 };
 
 exports.logout = async (req, res) => {
