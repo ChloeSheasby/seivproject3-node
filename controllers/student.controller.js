@@ -41,6 +41,19 @@ exports.findAll = (req, res) => {
     });
   };
 
+  
+// Retrieve all Degrees from the database.
+exports.findForAdvisor = (req, res) => {
+  Student.getForAdvisor(req.params.advisorID, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving students."
+      });
+    else res.send(data);
+  });
+};
+
 // Retrieve all Degrees from the database.
 exports.findSome = (req, res) => {
   Student.getSome(req.query.start, req.query.length, (err, data) => {
