@@ -41,6 +41,19 @@ Student.findById = (studentID, result) => {
   });
 };
 
+Student.getForAdvisor = (advisorID, result) => {
+  sql.query(`SELECT * FROM students WHERE advisorID = ${advisorID}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log("students: ", res);
+    result(null, res);
+  });
+};
+
 Student.getAll = result => {
   sql.query("SELECT * FROM students", (err, res) => {
     if (err) {
