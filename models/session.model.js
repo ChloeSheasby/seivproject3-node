@@ -8,8 +8,8 @@ const Session = function(session) {
   this.advisorID = session.advisorID,
   this.studentID = session.studentID,
   this.expirationDate = session.expirationDate,
-  this.lastUpdDate = semester.lastUpdDate;
-  this.lastUpdBy = semester.lastUpdBy;
+  this.lastUpdDate = session.lastUpdDate;
+  this.lastUpdBy = session.lastUpdBy;
 };
 
 Session.create = (newSession, result) => {
@@ -121,7 +121,26 @@ Session.remove = (sessionID, result) => {
       return;
     }
 
-    console.log("deleted session with sessionID: ", semesterID);
+    console.log("deleted session with sessionID: ", sessionID);
+    result(null, res);
+  });
+};
+
+Session.removeByToken = (token, result) => {
+  sql.query(`DELETE FROM sessions WHERE token = "${token}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      // not found Session with the token
+      result({ kind: "not_found" }, null);
+      return;
+    }
+
+    console.log("deleted session with token: ", token);
     result(null, res);
   });
 };

@@ -42,7 +42,7 @@ Student.findById = (studentID, result) => {
 };
 
 Student.findByEmail = (email, result) => {
-  sql.query(`SELECT * FROM students WHERE email = ${email}`, (err, res) => {
+  sql.query(`SELECT * FROM students WHERE email = "${email}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
