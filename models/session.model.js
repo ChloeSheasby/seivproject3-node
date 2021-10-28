@@ -20,7 +20,7 @@ Session.create = (newSession, result) => {
       return;
     }
 
-    console.log("created session: ", { sessionID: res.insertId, ...newSemester });
+    console.log("created session: ", { sessionID: res.insertId, ...newSession });
     result(null, { sessionID: res.insertId, ...newSession });
   });
 };
@@ -40,6 +40,25 @@ Session.findById = (sessionID, result) => {
     }
 
     // not found Session with the sessionID
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Session.findByToken = (token, result) => {
+  sql.query(`SELECT * FROM sessions WHERE token = '${token}'`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found session: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found Session with the token
     result({ kind: "not_found" }, null);
   });
 };

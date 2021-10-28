@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
                         user.studentID = student.studentID;
                         user.userID = student.studentID;
                         user.fName = student.fName;
-                        user.roles = "student";
+                        user.role = "student";
                         foundUser = true;
                     }
                 }
@@ -64,12 +64,13 @@ exports.login = async (req, res) => {
                 user.studentID = null;
                 user.userID = advisor.advisorID;
                 user.fName = advisor.fName;
-                user.roles = advisor.roles;
+                user.role = advisor.role;
                 foundUser = true;
             }
         }
 
-        let findExpirationDate = new Date() + 1;
+        let findExpirationDate = new Date();
+        findExpirationDate.setDate(findExpirationDate.getDate() + 1);
         const session = {
             token : token,
             email : user.email,
@@ -83,7 +84,8 @@ exports.login = async (req, res) => {
         const userInfo = {
             token : token,
             email : user.email,
-            roles : user.roles,
+            fName : user.fName,
+            role : user.role,
             userID : user.userID,
             studentID : user.studentID,
             advisorID : user.advisorID

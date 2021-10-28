@@ -16,8 +16,9 @@ authenticate = (req, res, next) => {
               });
             }
             req.userId = decoded.id;
-            next();
           });
+          //if(token)
+          next();
         }
   }
   else {
@@ -28,55 +29,56 @@ authenticate = (req, res, next) => {
 };
 
 isAdmin = (req, res, next) => {
-  User.findByPk(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles === "admin") {
-          next();
-          return;
-        }
-      }
-
-      res.status(403).send({
-        message: "Require Admin role!"
-      });
-      return;
-    });
-  });
-};
-
-isAny = (req, res, next) => {
-  User.findByPk(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles === "student" || roles === "advisor" || roles === "admin") {
-          next();
-          return;
-        }
-      }
-
-      res.status(403).send({
-        message: "Require any role!"
-      });
-    });
-  });
-};
-
-isAdminOrAdvisor = (req, res, next) => {
-  User.findByPk(req.userId).then(user => {
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles === "advisor" || roles === "admin") {
+    Advisor.findByID(req.advisorID).then(user => {
+        if (user.role === "admin") {
             next();
             return;
         }
-      }
 
-      res.status(403).send({
-        message: "Require Advisor or Admin role!"
-      });
+        res.status(403).send({
+            message: "Require Admin role!"
+        });
+        return;
     });
-  });
+};
+
+isAdminOrAdvisor = (req, res, next) => {
+    Advisor.findByID(req.advisorID).then(user => {
+        if (user.role === "admin" || user.role === "advisor") {
+            next();
+            return;
+        }
+
+        res.status(403).send({
+            message: "Require Admin or Advisor role!"
+        });
+        return;
+    });
+  };
+
+isAny = (req, res, next) => {
+    Session.findByToken(req.token).then(user => {
+
+    })
+    Advisor.findByID(req.userId).then(user => {
+        if (user.role === "admin" || user.role === "advisor") {
+            next();
+            return;
+        }
+        else {
+            Student.findByID(req.userId).then(user => {
+                if (user.role === "admin" || user.role === "advisor") {
+                    next();
+                    return;
+                }
+                
+                res.status(403).send({
+                    message: "Require any role!"
+                });
+                return;
+            })
+        }
+    });
 };
 
 const auth = {
