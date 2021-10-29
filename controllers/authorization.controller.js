@@ -23,7 +23,6 @@ exports.login = async (req, res) => {
     let token = null;
     let foundUser = false;
     Advisor.findByEmail(email, (err, data) => {
-        console.log(data.email)
         if (err) {
             Student.findByEmail(email, (err, data) => {
                 if (err) {
@@ -50,6 +49,37 @@ exports.login = async (req, res) => {
                         user.role = "student";
                         foundUser = true;
                     }
+
+                    let findExpirationDate = new Date();
+                    findExpirationDate.setDate(findExpirationDate.getDate() + 1);
+                    const session = {
+                        token : token,
+                        email : user.email,
+                        advisorID : user.advisorID,
+                        studentID : user.studentID,
+                        expirationDate : findExpirationDate,
+                        lastUpdBy : user.userID,
+                        lastUpdDate : new Date()
+                    }
+
+                    const userInfo = {
+                        token : token,
+                        email : user.email,
+                        fName : user.fName,
+                        role : user.role,
+                        userID : user.userID,
+                        studentID : user.studentID,
+                        advisorID : user.advisorID
+                    }
+                    // Save Session in the database
+                    Session.create(session, (err, data) => {
+                        if (err)
+                        res.status(500).send({
+                            message:
+                            err.message || "Some error occurred while creating the Session."
+                        });
+                        else res.send(userInfo);
+                    });
                 }
             })
                 
@@ -67,38 +97,38 @@ exports.login = async (req, res) => {
                 user.role = advisor.role;
                 foundUser = true;
             }
-        }
 
-        let findExpirationDate = new Date();
-        findExpirationDate.setDate(findExpirationDate.getDate() + 1);
-        const session = {
-            token : token,
-            email : user.email,
-            advisorID : user.advisorID,
-            studentID : user.studentID,
-            expirationDate : findExpirationDate,
-            lastUpdBy : user.userID,
-            lastUpdDate : new Date()
-        }
+            let findExpirationDate = new Date();
+            findExpirationDate.setDate(findExpirationDate.getDate() + 1);
+            const session = {
+                token : token,
+                email : user.email,
+                advisorID : user.advisorID,
+                studentID : user.studentID,
+                expirationDate : findExpirationDate,
+                lastUpdBy : user.userID,
+                lastUpdDate : new Date()
+            }
 
-        const userInfo = {
-            token : token,
-            email : user.email,
-            fName : user.fName,
-            role : user.role,
-            userID : user.userID,
-            studentID : user.studentID,
-            advisorID : user.advisorID
-        }
-        // Save Session in the database
-        Session.create(session, (err, data) => {
-            if (err)
-            res.status(500).send({
-                message:
-                err.message || "Some error occurred while creating the Session."
+            const userInfo = {
+                token : token,
+                email : user.email,
+                fName : user.fName,
+                role : user.role,
+                userID : user.userID,
+                studentID : user.studentID,
+                advisorID : user.advisorID
+            }
+            // Save Session in the database
+            Session.create(session, (err, data) => {
+                if (err)
+                res.status(500).send({
+                    message:
+                    err.message || "Some error occurred while creating the Session."
+                });
+                else res.send(userInfo);
             });
-            else res.send(userInfo);
-        });
+        }
     })
 };
 
