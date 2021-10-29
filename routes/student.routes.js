@@ -9,6 +9,8 @@ module.exports = app => {
   
     // Retrieve a single Student with studentID
     app.get("/api/students/:studentID", students.findOne);
+
+    app.get("/api/students/advisor/:advisorID", students.findForAdvisor);
   
     // Update a Student with studentID
     app.put("/api/students/:studentID", students.update);

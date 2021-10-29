@@ -57,8 +57,19 @@ Student.findByEmail = (email, result) => {
 
     // not found Student with the studentID
     result({ kind: "not_found" }, null);
-  });
-};
+});
+
+Student.getForAdvisor = (advisorID, result) => {
+  sql.query(`SELECT * FROM students WHERE advisorID = ${advisorID}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log("students: ", res);
+    result(null, res);
+});
 
 Student.getAll = result => {
   sql.query("SELECT * FROM students", (err, res) => {
