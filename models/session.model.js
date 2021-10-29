@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const { setUpdBy } = require("../utils/utils.js")
 
 // constructor
 const Session = function(session) {
@@ -8,8 +9,8 @@ const Session = function(session) {
   this.advisorID = session.advisorID,
   this.studentID = session.studentID,
   this.expirationDate = session.expirationDate,
-  this.lastUpdDate = session.lastUpdDate;
-  this.lastUpdBy = session.lastUpdBy;
+  this.lastUpdDate = new Date();
+  this.lastUpdBy = setUpdBy;
 };
 
 Session.create = (newSession, result) => {
@@ -104,9 +105,10 @@ Session.getSome = (start, length, result) => {
 };
 
 Session.updateById = (sessionID, session, result) => {
+  let date = new Date();
   sql.query(
-    "UPDATE sessions SET sessionID = ?, token = ?, email = ?, advisorID = ?, studentID = ?, expirationDate = ?, lastUpdDate = ?, lastUpdBy = ? WHERE sessionID = ?",
-    [session.sessionID, session.token, session.email, session.advisorID, session.studentID, session.expirationDate, session.lastUpdDate, session.lastUpdBy, sessionID],
+    `UPDATE sessions SET sessionID = ?, token = ?, email = ?, advisorID = ?, studentID = ?, expirationDate = ?, lastUpdDate = ${date}, lastUpdBy = ${setUpdBy} WHERE sessionID = ?`,
+    [session.sessionID, session.token, session.email, session.advisorID, session.studentID, session.expirationDate, sessionID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const { setUpdBy } = require("../utils/utils.js")
 
 // constructor
 const Advisor = function(advisor) {
@@ -7,8 +8,8 @@ const Advisor = function(advisor) {
   this.email = advisor.email;
   this.dept = advisor.dept;
   this.role = advisor.role;
-  this.lastUpdDate = advisor.lastUpdDate;
-  this.lastUpdBy = advisor.lastUpdBy;
+  this.lastUpdDate = new Date();
+  this.lastUpdBy = setUpdBy;
 };
 
 Advisor.create = (newAdvisor, result) => {
@@ -103,10 +104,10 @@ Advisor.getSome = (start, length, result) => {
 };
 
 Advisor.updateById = (advisorID, advisor, result) => {
+  let date = new Date();
   sql.query(
-    "UPDATE advisors SET fName = ?, lName = ?, email = ?, dept = ?, lastUpdDate = ?, lastUpdBy = ? WHERE advisorID = ?",
-    //TODO - Update this!!!
-    [advisor.fName, advisor.lName, advisor.email, advisor.dept, advisor.lastUpdDate, advisor.lastUpdBy, advisorID],
+    `UPDATE advisors SET fName = ?, lName = ?, email = ?, dept = ?, lastUpdDate = ${date}, lastUpdBy = ${setUpdBy} WHERE advisorID = ?`,
+    [advisor.fName, advisor.lName, advisor.email, advisor.dept, advisorID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

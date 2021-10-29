@@ -1,21 +1,22 @@
 module.exports = app => {
     const degree_courses = require("../controllers/degree_courses.controller.js");
+    const { authenticate, isAdmin, isAdminOrAdvisor, isAny } = require("../utils/utils.js")
+
+    // Create a new Degree Course
+    app.post("/api/degree_courses", [authenticate, isAdmin], degree_courses.create);
   
-    // Create a new Degree
-    app.post("/api/degree_courses", degree_courses.create);
+    // Retrieve all Degree Courses
+    app.get("/api/degree_courses", [authenticate, isAny], degree_courses.findSome);
   
-    // Retrieve all Degrees
-    app.get("/api/degree_courses", degree_courses.findSome);
+    // Retrieve a single Degree Course with degreeCourseID
+    app.get("/api/degree_courses/:degreeCourseID", [authenticate, isAny], degree_courses.findOne);
   
-    // Retrieve a single Degree with degreeID
-    app.get("/api/degree_courses/:degreeCourseID", degree_courses.findOne);
+    // Update a Degree Course with degreeCourseID
+    app.put("/api/degree_courses/:degreeCourseID", [authenticate, isAdmin], degree_courses.update);
   
-    // Update a Degree with degreeID
-    app.put("/api/degree_courses/:degreeCourseID", degree_courses.update);
+    // Delete a Degree Course with degreeCourseID
+    app.delete("/api/degree_courses/:degreeCourseID", [authenticate, isAdmin], degree_courses.delete);
   
-    // Delete a Degree with degreeID
-    app.delete("/api/degree_courses/:degreeCourseID", degree_courses.delete);
-  
-    // Create a new Degree
-    app.delete("/api/degree_courses", degree_courses.deleteAll);
+    // Create a new Degree Course
+    app.delete("/api/degree_courses", [authenticate, isAdmin], degree_courses.deleteAll);
   };

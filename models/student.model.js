@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const { setUpdBy } = require("../utils/utils.js")
 
 // constructor
 const Student = function(student) {
@@ -7,6 +8,8 @@ const Student = function(student) {
   this.fName = student.fName;
   this.lName = student.lName;
   this.email = student.email;
+  this.lastUpdDate = new Date();
+  this.lastUpdBy = setUpdBy;
 };
 
 Student.create = (newStudent, result) => {
@@ -56,8 +59,9 @@ Student.findByEmail = (email, result) => {
     }
 
     // not found Student with the studentID
-    result({ kind: "not_found" }, null);
-});
+    result({ kind: "not_found" }, null);  
+  });
+};
 
 Student.getForAdvisor = (advisorID, result) => {
   sql.query(`SELECT * FROM students WHERE advisorID = ${advisorID}`, (err, res) => {
@@ -69,7 +73,8 @@ Student.getForAdvisor = (advisorID, result) => {
 
     console.log("students: ", res);
     result(null, res);
-});
+  });
+};
 
 Student.getAll = result => {
   sql.query("SELECT * FROM students", (err, res) => {
@@ -112,9 +117,9 @@ Student.getSome = (start, length, result) => {
 };
 
 Student.updateById = (studentID, student, result) => {
+  let date = new Date();
   sql.query(
-    "UPDATE students SET degreeID = ?, advisorID = ?, fName = ?, lName = ?, email = ? WHERE studentID = ?",
-    //TODO - Update this!!!
+    `UPDATE students SET degreeID = ?, advisorID = ?, fName = ?, lName = ?, email = ?, lastUpdDate = ${date}, lastUpdBy = ${setUpdBy} WHERE studentID = ?`,
     [student.degreeID, student.advisorID, student.fName, student.lName, student.email, studentID],
     (err, res) => {
       if (err) {
