@@ -27,7 +27,8 @@ authenticate = (req, res, next) => {
 };
 
 isAdmin = (req, res, next) => {
-    let role = findRoleByToken;
+    let role = findRoleByToken(req);
+    console.log(role);
     if(role === 'admin') {
         next();
         return;
@@ -36,21 +37,11 @@ isAdmin = (req, res, next) => {
         message: "Require Admin role!"
     });
     return;
-    // Advisor.findByID(req.advisorID).then(user => {
-    //     if (user.role === "admin") {
-    //         next();
-    //         return;
-    //     }
-
-    //     res.status(403).send({
-    //         message: "Require Admin role!"
-    //     });
-    //     return;
-    // });
 };
 
 isAdminOrAdvisor = (req, res, next) => {
-    let role = findRoleByToken;
+    let role = findRoleByToken(req);
+    console.log(role);
     if(role === 'admin' || role === 'advisor') {
         next();
         return;
@@ -59,21 +50,11 @@ isAdminOrAdvisor = (req, res, next) => {
         message: "Require admin or advisor role!"
     });
     return;
-    // Advisor.findByID(req.advisorID).then(user => {
-    //     if (user.role === "admin" || user.role === "advisor") {
-    //         next();
-    //         return;
-    //     }
-
-    //     res.status(403).send({
-    //         message: "Require Admin or Advisor role!"
-    //     });
-    //     return;
-    // });
   };
 
 isAny = (req, res, next) => {
-    let role = findRoleByToken;
+    let role = findRoleByToken(req);
+    console.log(role);
     if(role === 'admin' || role === 'advisor' || role === 'student') {
         next();
         return;
@@ -82,42 +63,24 @@ isAny = (req, res, next) => {
         message: "Require any role!"
     });
     return;
-    // Advisor.findByID(req.userId).then(user => {
-    //     if (user.role === "admin" || user.role === "advisor") {
-    //         next();
-    //         return;
-    //     }
-    //     else {
-    //         Student.findByID(req.userId).then(user => {
-    //             if (user.role === "student") {
-    //                 next();
-    //                 return;
-    //             }
-                
-    //             res.status(403).send({
-    //                 message: "Require any role!"
-    //             });
-    //             return;
-    //         })
-    //     }
-    // });
 };
 
 findRoleByToken = (req, res) => {
-    let role = null
+    var role = null
     let authHeader = req.get("authorization")
     if(authHeader != null) {
         if(authHeader.startsWith("Bearer")) {
             let token = authHeader.slice(7)
-            Session.findByToken(token, (err, data) => {
+            Session.findByToken(token, async (err, data) => {
                 if (err) {
                     return res.status(401).send({
                       message: "Unauthorized!"
                     });
                 }
                 if (data != null) {
-                    if (data.advisorID !== null) {
-                        Advisor.findByID(data.advisorID, (err, data) => {
+                    let user = data
+                    if (user.advisorID !== null) {
+                        Advisor.findById(user.advisorID, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {
                                     res.status(404).send({
@@ -133,13 +96,12 @@ findRoleByToken = (req, res) => {
                             else {
                                 if (data != null) {
                                     role = data.role
-                                    return role
                                 }
                             }
                         })
                     }
-                    else if (data.studentID !== null) {
-                        Student.findByID(data.studentID, (err, data) => {
+                    else if (user.studentID !== null) {
+                        Student.findById(user.studentID, (err, data) => {
                             if (err) {
                                 if (err.kind === "not_found") {
                                     res.status(404).send({
@@ -155,7 +117,6 @@ findRoleByToken = (req, res) => {
                             else {
                                 if (data != null) {
                                     role = data.role
-                                    return role
                                 }
                             }
                         })
@@ -166,6 +127,8 @@ findRoleByToken = (req, res) => {
                           });
                     }
                 }
+            }).then(result => {
+                console.log(result)
             })
         }
         else {

@@ -49,18 +49,18 @@ Session.findByToken = (token, result) => {
   sql.query(`SELECT * FROM sessions WHERE token = '${token}'`, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(err, null);
+      await result(err, null);
       return;
     }
 
     if (res.length) {
       console.log("found session: ", res[0]);
-      result(null, res[0]);
+      await result(null, res[0]);
       return;
     }
 
     // not found Session with the token
-    result({ kind: "not_found" }, null);
+    await result({ kind: "not_found" }, null);
   });
 };
 
