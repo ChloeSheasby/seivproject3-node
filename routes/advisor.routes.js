@@ -9,7 +9,7 @@ module.exports = app => {
     app.get("/api/advisors", [authenticate, isAdmin], advisors.findSome);
   
     // Retrieve a single Advisor with advisorID
-    app.get("/api/advisors/:advisorID", [authenticate, isAdmin], advisors.findOne);
+    app.get("/api/advisors/:advisorID", [authenticate, isAdminOrAdvisor], advisors.findOne);
   
     // Update a Advisor with advisorID
     app.put("/api/advisors/:advisorID", [authenticate, isAdminOrAdvisor], advisors.update);

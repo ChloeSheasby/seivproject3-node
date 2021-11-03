@@ -39,47 +39,56 @@ authenticate = (req, res, next) => {
 };
 
 isAdmin = (req, res, next) => {
-    let role = findRoleByToken(req);
-    console.log(role);
-    if (role === 'admin') {
-        next();
+    let role = null;
+    findRoleByToken(req, res).then(result => {
+        role = result
+        console.log("in isAdmin and role = " + role)
+        if (role === 'admin') {
+            next();
+            return;
+        }
+        res.status(403).send({
+            message: 'Require Admin role!',
+        });
         return;
-    }
-    res.status(403).send({
-        message: 'Require Admin role!',
-    });
-    return;
+    })
 };
 
 isAdminOrAdvisor = (req, res, next) => {
-    let role = findRoleByToken(req);
-    console.log(role);
-    if (role === 'admin' || role === 'advisor') {
-        next();
+    let role = null;
+    findRoleByToken(req, res).then(result => {
+        role = result
+        console.log("in isAdminOrAdvisor and role = " + role)
+        if (role === 'admin' || role === 'advisor') {
+            next();
+            return;
+        }
+        res.status(403).send({
+            message: 'Require admin or advisor role!',
+        });
         return;
-    }
-    res.status(403).send({
-        message: 'Require admin or advisor role!',
-    });
-    return;
+    })
 };
 
 isAny = (req, res, next) => {
-    let role = findRoleByToken(req);
-    console.log(role);
-    if (role === 'admin' || role === 'advisor' || role === 'student') {
-        next();
+    let role = null;
+    findRoleByToken(req, res).then(result => {
+        role = result
+        console.log("in isAny and role = " + role)
+        if (role === 'admin' || role === 'advisor' || role === 'student') {
+            next();
+            return;
+        }
+        res.status(403).send({
+            message: 'Require any role!',
+        });
         return;
-    }
-    res.status(403).send({
-        message: 'Require any role!',
-    });
-    return;
+    })
 };
 
 async function findRoleByToken(req, res) {
     const db = makeDb();
-    var role = null;
+    let id = null;
     let authHeader = req.get('authorization');
     if (authHeader != null) {
         if (authHeader.startsWith('Bearer')) {
@@ -88,23 +97,24 @@ async function findRoleByToken(req, res) {
                 const sessionrow = await db.query(
                     `SELECT * FROM sessions WHERE token = '${token}'`,
                 );
-                if (sessionrow.advisorID != null) {
+                console.log(sessionrow[0].advisorID)
+                if (sessionrow[0].advisorID != null) {
+                    id = 'A' + sessionrow[0].advisorID
                     const advisorrow = await db.query(
-                        `SELECT * FROM advisors WHERE advisorID = ${sessionrow.advisorID}`,
+                        `SELECT * FROM advisors WHERE advisorID = ${sessionrow[0].advisorID}`,
                     );
-                    return advisorrow.role;
+                    return advisorrow[0].role;
                 } else {
+                    id = 'S' + sessionrow[0].studentID
                     const studentrow = await db.query(
-                        `SELECT * FROM students WHERE studentID = ${sessonrow.studentID}`,
+                        `SELECT * FROM students WHERE studentID = ${sessionrow[0].studentID}`,
                     );
-                    return studentrow.role;
+                    return "student";
                 }
             } catch (err) {
                 return res.status(401).send({
                     message: 'Unauthorized!',
                 });
-            } finally {
-                db.close();
             }
         } else {
             return res.status(403).send({
@@ -118,32 +128,27 @@ async function findRoleByToken(req, res) {
     }
 }
 
-setUpdBy = (req, res) => {
-    let id = null;
+async function setUpdBy (req, res) {
+    const db = makeDb();
     let authHeader = req.get('authorization');
     if (authHeader != null) {
         if (authHeader.startsWith('Bearer')) {
             let token = authHeader.slice(7);
-            Session.findByToken(token, (err, data) => {
-                if (err) {
-                    return res.status(401).send({
-                        message: 'Unauthorized!',
-                    });
+            try {
+                const sessionrow = await db.query(
+                    `SELECT * FROM sessions WHERE token = '${token}'`,
+                );
+                console.log(sessionrow[0].advisorID)
+                if (sessionrow[0].advisorID != null) {
+                    return 'A' + sessionrow[0].advisorID
+                } else {
+                    return 'S' + sessionrow[0].studentID
                 }
-                if (data != null) {
-                    if (data.advisorID !== null) {
-                        id = 'A' + data.advisorID;
-                        return id;
-                    } else if (data.studentID !== null) {
-                        id = 'S' + data.studentID;
-                        return id;
-                    } else {
-                        return res.status(401).send({
-                            message: 'Bad data error -- data = ' + data,
-                        });
-                    }
-                }
-            });
+            } catch (err) {
+                return res.status(401).send({
+                    message: 'Bad data error',
+                });
+            }
         } else {
             return res.status(403).send({
                 message: 'No token provided!',
