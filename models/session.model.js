@@ -1,16 +1,15 @@
 const sql = require('./db.js');
-const { setUpdBy } = require('../utils/utils.js');
 
 // constructor
 const Session = function(session) {
-    (this.sessionID = session.sessionID),
-        (this.token = session.token),
-        (this.email = session.email),
-        (this.advisorID = session.advisorID),
-        (this.studentID = session.studentID),
-        (this.expirationDate = session.expirationDate),
-        (this.lastUpdDate = new Date());
-    this.lastUpdBy = setUpdBy;
+  this.sessionID = session.sessionID,
+  this.token = session.token,
+  this.email = session.email,
+  this.advisorID = session.advisorID,
+  this.studentID = session.studentID,
+  this.expirationDate = session.expirationDate,
+  this.lastUpdDate = new Date();
+  this.lastUpdBy = setUpdBy;
 };
 
 Session.create = (newSession, result) => {

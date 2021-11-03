@@ -1,5 +1,4 @@
 const sql = require("./db.js");
-const { setUpdBy } = require("../utils/utils.js")
 
 // constructor
 const Student_courses = function(student_courses) {
@@ -9,7 +8,7 @@ const Student_courses = function(student_courses) {
   this.grade = student_courses.grade;
   this.status = student_courses.status;
   this.lastUpdDate = new Date();
-  this.lastUpdBy = setUpdBy;
+  this.lastUpdBy = student_courses.lastUpdBy;
 };
 
 Student_courses.create = (newStudent_courses, result) => {
@@ -87,8 +86,8 @@ Student_courses.getSome = (start, length, result) => {
 Student_courses.updateById = (studentCourseID, student_courses, result) => {
   let date = new Date();
   sql.query(
-    `UPDATE student_courses SET studentID = ?, courseID = ?, semesterID = ?, grade = ?, status = ?, lastUpdDate = ${date}, lastUpdBy = ${setUpdBy} WHERE studentCourseID = ?`,
-    [student_courses.studentID, student_courses.courseID, student_courses.semesterID, student_courses.grade, student_courses.status, studentCourseID],
+    `UPDATE student_courses SET studentID = ?, courseID = ?, semesterID = ?, grade = ?, status = ?, lastUpdDate = ${date}, lastUpdBy = ? WHERE studentCourseID = ?`,
+    [student_courses.studentID, student_courses.courseID, student_courses.semesterID, student_courses.grade, student_courses.status, student_courses.lastUpdBy, studentCourseID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

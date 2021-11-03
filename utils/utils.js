@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/auth.config.js');
 const sql = require('../models/db.js');
-
 const util = require('util');
-//const mysql = require('mysql');
+var id = null
+
 function makeDb() {
-    //   const connection = mysql.createConnection(config);
     const connection = sql;
     return {
         query(sql, args) {
@@ -88,7 +87,6 @@ isAny = (req, res, next) => {
 
 async function findRoleByToken(req, res) {
     const db = makeDb();
-    let id = null;
     let authHeader = req.get('authorization');
     if (authHeader != null) {
         if (authHeader.startsWith('Bearer')) {
@@ -100,6 +98,7 @@ async function findRoleByToken(req, res) {
                 console.log(sessionrow[0].advisorID)
                 if (sessionrow[0].advisorID != null) {
                     id = 'A' + sessionrow[0].advisorID
+                    console.log(id)
                     const advisorrow = await db.query(
                         `SELECT * FROM advisors WHERE advisorID = ${sessionrow[0].advisorID}`,
                     );
@@ -128,34 +127,7 @@ async function findRoleByToken(req, res) {
     }
 }
 
-async function setUpdBy (req, res) {
-    const db = makeDb();
-    let authHeader = req.get('authorization');
-    if (authHeader != null) {
-        if (authHeader.startsWith('Bearer')) {
-            let token = authHeader.slice(7);
-            try {
-                const sessionrow = await db.query(
-                    `SELECT * FROM sessions WHERE token = '${token}'`,
-                );
-                console.log(sessionrow[0].advisorID)
-                if (sessionrow[0].advisorID != null) {
-                    return 'A' + sessionrow[0].advisorID
-                } else {
-                    return 'S' + sessionrow[0].studentID
-                }
-            } catch (err) {
-                return res.status(401).send({
-                    message: 'Bad data error',
-                });
-            }
-        } else {
-            return res.status(403).send({
-                message: 'No token provided!',
-            });
-        }
-    }
-};
+console.log(id)
 
 const auth = {
     authenticate: authenticate,
@@ -163,6 +135,6 @@ const auth = {
     isAny: isAny,
     isAdminOrAdvisor: isAdminOrAdvisor,
     findRoleByToken: findRoleByToken,
-    setUpdBy: setUpdBy,
+    id: id
 };
 module.exports = auth;
