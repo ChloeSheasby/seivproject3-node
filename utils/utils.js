@@ -1,40 +1,52 @@
-const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config.js");
-const Advisor = require("../models/advisor.model.js");
-const Student = require("../models/student.model.js");
-const Session = require("../models/session.model.js");
+const jwt = require('jsonwebtoken');
+const config = require('../config/auth.config.js');
+const sql = require('../models/db.js');
+
+const util = require('util');
+//const mysql = require('mysql');
+function makeDb() {
+    //   const connection = mysql.createConnection(config);
+    const connection = sql;
+    return {
+        query(sql, args) {
+            return util.promisify(connection.query).call(connection, sql, args);
+        },
+        close() {
+            return util.promisify(connection.end).call(connection);
+        },
+    };
+}
 
 authenticate = (req, res, next) => {
-  let authHeader = req.get("authorization")
-  if(authHeader != null) {
-      if(authHeader.startsWith("Bearer")) {
-          let token = authHeader.slice(7)
-          jwt.verify(token, config.secret, (err, decoded) => {
-            if (err) {
-              return res.status(401).send({
-                message: "Unauthorized!"
-              });
-            }
-          });
-          next();
+    let authHeader = req.get('authorization');
+    if (authHeader != null) {
+        if (authHeader.startsWith('Bearer')) {
+            let token = authHeader.slice(7);
+            jwt.verify(token, config.secret, (err, decoded) => {
+                if (err) {
+                    return res.status(401).send({
+                        message: 'Unauthorized!',
+                    });
+                }
+            });
+            next();
         }
-  }
-  else {
-    return res.status(403).send({
-        message: "No token provided!"
-      });
-  }
+    } else {
+        return res.status(403).send({
+            message: 'No token provided!',
+        });
+    }
 };
 
 isAdmin = (req, res, next) => {
     let role = findRoleByToken(req);
     console.log(role);
-    if(role === 'admin') {
+    if (role === 'admin') {
         next();
         return;
     }
     res.status(403).send({
-        message: "Require Admin role!"
+        message: 'Require Admin role!',
     });
     return;
 };
@@ -42,146 +54,110 @@ isAdmin = (req, res, next) => {
 isAdminOrAdvisor = (req, res, next) => {
     let role = findRoleByToken(req);
     console.log(role);
-    if(role === 'admin' || role === 'advisor') {
+    if (role === 'admin' || role === 'advisor') {
         next();
         return;
     }
     res.status(403).send({
-        message: "Require admin or advisor role!"
+        message: 'Require admin or advisor role!',
     });
     return;
-  };
+};
 
 isAny = (req, res, next) => {
     let role = findRoleByToken(req);
     console.log(role);
-    if(role === 'admin' || role === 'advisor' || role === 'student') {
+    if (role === 'admin' || role === 'advisor' || role === 'student') {
         next();
         return;
     }
     res.status(403).send({
-        message: "Require any role!"
+        message: 'Require any role!',
     });
     return;
 };
 
-findRoleByToken = (req, res) => {
-    var role = null
-    let authHeader = req.get("authorization")
-    if(authHeader != null) {
-        if(authHeader.startsWith("Bearer")) {
-            let token = authHeader.slice(7)
-            Session.findByToken(token, async (err, data) => {
-                if (err) {
-                    return res.status(401).send({
-                      message: "Unauthorized!"
-                    });
+async function findRoleByToken(req, res) {
+    const db = makeDb();
+    var role = null;
+    let authHeader = req.get('authorization');
+    if (authHeader != null) {
+        if (authHeader.startsWith('Bearer')) {
+            let token = authHeader.slice(7);
+            try {
+                const sessionrow = await db.query(
+                    `SELECT * FROM sessions WHERE token = '${token}'`,
+                );
+                if (sessionrow.advisorID != null) {
+                    const advisorrow = await db.query(
+                        `SELECT * FROM advisors WHERE advisorID = ${sessionrow.advisorID}`,
+                    );
+                    return advisorrow.role;
+                } else {
+                    const studentrow = await db.query(
+                        `SELECT * FROM students WHERE studentID = ${sessonrow.studentID}`,
+                    );
+                    return studentrow.role;
                 }
-                if (data != null) {
-                    let user = data
-                    if (user.advisorID !== null) {
-                        Advisor.findById(user.advisorID, (err, data) => {
-                            if (err) {
-                                if (err.kind === "not_found") {
-                                    res.status(404).send({
-                                        message: `Not found Advisor with ID.`
-                                    });
-                                } 
-                                else {
-                                      res.status(500).send({
-                                        message: "Error retrieving Advisor with ID"
-                                    });
-                                }
-                            }
-                            else {
-                                if (data != null) {
-                                    role = data.role
-                                }
-                            }
-                        })
-                    }
-                    else if (user.studentID !== null) {
-                        Student.findById(user.studentID, (err, data) => {
-                            if (err) {
-                                if (err.kind === "not_found") {
-                                    res.status(404).send({
-                                        message: `Not found Student with ID.`
-                                    });
-                                } 
-                                else {
-                                      res.status(500).send({
-                                        message: "Error retrieving Student with ID"
-                                    });
-                                }
-                            }
-                            else {
-                                if (data != null) {
-                                    role = data.role
-                                }
-                            }
-                        })
-                    }
-                    else {
-                        return res.status(401).send({
-                            message: "Bad data error -- data = " + data
-                          });
-                    }
-                }
-            }).then(result => {
-                console.log(result)
-            })
-        }
-        else {
+            } catch (err) {
+                return res.status(401).send({
+                    message: 'Unauthorized!',
+                });
+            } finally {
+                db.close();
+            }
+        } else {
             return res.status(403).send({
-                message: "No token provided!"
-          });
+                message: 'No token provided!',
+            });
         }
+    } else {
+        return res.status(403).send({
+            message: 'No authorization header provided!',
+        });
     }
 }
 
 setUpdBy = (req, res) => {
-    let id = null
-    let authHeader = req.get("authorization")
-    if(authHeader != null) {
-        if(authHeader.startsWith("Bearer")) {
-            let token = authHeader.slice(7)
+    let id = null;
+    let authHeader = req.get('authorization');
+    if (authHeader != null) {
+        if (authHeader.startsWith('Bearer')) {
+            let token = authHeader.slice(7);
             Session.findByToken(token, (err, data) => {
                 if (err) {
                     return res.status(401).send({
-                      message: "Unauthorized!"
+                        message: 'Unauthorized!',
                     });
                 }
                 if (data != null) {
                     if (data.advisorID !== null) {
-                        id = 'A' + data.advisorID
-                        return id
-                    }
-                    else if (data.studentID !== null) {
-                        id = 'S' + data.studentID
-                        return id
-                    }
-                    else {
+                        id = 'A' + data.advisorID;
+                        return id;
+                    } else if (data.studentID !== null) {
+                        id = 'S' + data.studentID;
+                        return id;
+                    } else {
                         return res.status(401).send({
-                            message: "Bad data error -- data = " + data
-                          });
+                            message: 'Bad data error -- data = ' + data,
+                        });
                     }
                 }
-            })
-        }
-        else {
+            });
+        } else {
             return res.status(403).send({
-                message: "No token provided!"
-          });
+                message: 'No token provided!',
+            });
         }
     }
-}
+};
 
 const auth = {
-  authenticate: authenticate,
-  isAdmin: isAdmin,
-  isAny: isAny,
-  isAdminOrAdvisor: isAdminOrAdvisor,
-  findRoleByToken: findRoleByToken,
-  setUpdBy: setUpdBy
+    authenticate: authenticate,
+    isAdmin: isAdmin,
+    isAny: isAny,
+    isAdminOrAdvisor: isAdminOrAdvisor,
+    findRoleByToken: findRoleByToken,
+    setUpdBy: setUpdBy,
 };
-module.exports = auth
+module.exports = auth;

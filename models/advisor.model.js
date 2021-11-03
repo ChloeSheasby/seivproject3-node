@@ -25,8 +25,8 @@ Advisor.create = (newAdvisor, result) => {
   });
 };
 
-Advisor.findById = async (advisorID, result) => {
-  await sql.query(`SELECT * FROM advisors WHERE advisorID = ${advisorID}`, (err, res) => {
+Advisor.findById = (advisorID, result) => {
+  sql.query(`SELECT * FROM advisors WHERE advisorID = ${advisorID}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
