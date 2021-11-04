@@ -3,6 +3,7 @@ const Student = require("../models/student.model.js");
 const Session = require("../models/session.model.js");
 var jwt = require('jsonwebtoken');
 const authconfig = require("../config/auth.config.js");
+const { getID } = require("../utils/utils.js")
 
 exports.login = async (req, res) => {
     const {OAuth2Client} = require('google-auth-library');
@@ -50,7 +51,7 @@ exports.login = async (req, res) => {
                         foundUser = true;
                     }
 
-                    let findExpirationDate = new Date();
+                    let findExpirationDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
                     findExpirationDate.setDate(findExpirationDate.getDate() + 1);
                     const session = {
                         token : token,
@@ -58,8 +59,8 @@ exports.login = async (req, res) => {
                         advisorID : user.advisorID,
                         studentID : user.studentID,
                         expirationDate : findExpirationDate,
-                        lastUpdBy : user.userID,
-                        lastUpdDate : new Date()
+                        lastUpdBy : getID(),
+                        lastUpdDate : new Date().toISOString().slice(0, 19).replace('T', ' ')
                     }
 
                     const userInfo = {
@@ -98,7 +99,7 @@ exports.login = async (req, res) => {
                 foundUser = true;
             }
 
-            let findExpirationDate = new Date();
+            let findExpirationDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
             findExpirationDate.setDate(findExpirationDate.getDate() + 1);
             const session = {
                 token : token,
@@ -106,8 +107,8 @@ exports.login = async (req, res) => {
                 advisorID : user.advisorID,
                 studentID : user.studentID,
                 expirationDate : findExpirationDate,
-                lastUpdBy : user.userID,
-                lastUpdDate : new Date()
+                lastUpdBy : getID(),
+                lastUpdDate : new Date().toISOString().slice(0, 19).replace('T', ' ')
             }
 
             const userInfo = {

@@ -1,11 +1,12 @@
 const sql = require("./db.js");
+const { getID } = require("../utils/utils.js")
 
 // constructor
 const Degree_courses = function(degree_courses) {
   this.degreeID = degree_courses.degreeID;
   this.courseID = degree_courses.courseID;
-  this.lastUpdDate = new Date();
-  this.lastUpdBy = degree_courses.lastUpdBy;
+  this.lastUpdDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  this.lastUpdBy = getID();
 };
 
 Degree_courses.create = (newDegree_courses, result) => {
@@ -81,11 +82,10 @@ Degree_courses.getSome = (start, length, result) => {
 };
 
 Degree_courses.updateById = (degreeCourseID, degree_courses, result) => {
-  let date = new Date();
+  let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    `UPDATE degree_courses SET degreeID = ?, courseID = ?, lastUpdDate = ${date}, lastUpdBy = ? WHERE degreeCourseID = ?`,
-    //TODO - Update this!!!
-    [degree_courses.degreeID, degree_courses.courseID, degree_course.lastUpdBy, degreeCourseID],
+    `UPDATE degree_courses SET degreeID = ?, courseID = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE degreeCourseID = ?`,
+    [degree_courses.degreeID, degree_courses.courseID, degreeCourseID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

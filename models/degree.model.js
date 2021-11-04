@@ -1,12 +1,13 @@
 const sql = require("./db.js");
+const { getID } = require("../utils/utils.js")
 
 // constructor
 const Degree = function(degree) {
   this.dept = degree.dept;
   this.degreeName = degree.degreeName;
   this.totalHours = degree.totalHours;
-  this.lastUpdDate = new Date();
-  this.lastUpdBy = degree.lastUpdBy;
+  this.lastUpdDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  this.lastUpdBy = getID();
 };
 
 Degree.create = (newDegree, result) => {
@@ -82,11 +83,10 @@ Degree.getSome = (start, length, result) => {
 };
 
 Degree.updateById = (degreeID, degree, result) => {
-  let date = new Date();
+  let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    `UPDATE degrees SET dept = ?, degreeName = ?, totalHours = ?, lastUpdDate = ${date}, lastUpdBy = ? WHERE degreeID = ?`,
-    //TODO - Update this!!!
-    [degree.dept, degree.degreeName, degree.totalHours, degree.lastUpdBy, degreeID],
+    `UPDATE degrees SET dept = ?, degreeName = ?, totalHours = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE degreeID = ?`,
+    [degree.dept, degree.degreeName, degree.totalHours, degreeID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

@@ -15,7 +15,9 @@ exports.create = (req, res) => {
       advisorID: req.body.advisorID,
       fName: req.body.fName,
       lName: req.body.lName,
-      email: req.body.email
+      email: req.body.email,
+      lastUpdDate: req.body.lastUpdDate,
+      lastUpdBy: req.body.lastUpdBy
     });
   
     // Save Degree in the database

@@ -13,7 +13,9 @@ exports.create = (req, res) => {
     const degree = new Degree({
       dept: req.body.dept,
       degreeName: req.body.degreeName,
-      totalHours: req.body.totalHours
+      totalHours: req.body.totalHours,
+      lastUpdDate: req.body.lastUpdDate,
+      lastUpdBy: req.body.lastUpdBy
     });
   
     // Save Degree in the database

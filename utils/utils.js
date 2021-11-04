@@ -127,7 +127,10 @@ async function findRoleByToken(req, res) {
     }
 }
 
-console.log(id)
+function getID() {
+    console.log(id)
+    return id
+}
 
 const auth = {
     authenticate: authenticate,
@@ -135,6 +138,6 @@ const auth = {
     isAny: isAny,
     isAdminOrAdvisor: isAdminOrAdvisor,
     findRoleByToken: findRoleByToken,
-    id: id
+    getID: getID
 };
 module.exports = auth;

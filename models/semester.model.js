@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const { getID } = require("../utils/utils.js")
 
 // constructor
 const Semester = function(semester) {
@@ -6,8 +7,8 @@ const Semester = function(semester) {
   this.semesterType = semester.semesterType;
   this.startDate = semester.startDate;
   this.endDate = semester.endDate;
-  this.lastUpdDate = new Date();
-  this.lastUpdBy = semester.lastUpdBy;
+  this.lastUpdDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  this.lastUpdBy = getID();
 };
 
 Semester.create = (newSemester, result) => {
@@ -83,10 +84,10 @@ Semester.getSome = (start, length, result) => {
 };
 
 Semester.updateById = (semesterID, semester, result) => {
-  let date = new Date();
+  let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    `UPDATE semesters SET semesterName = ?, semesterType = ?, startDate = ?, endDate = ?, lastUpdDate = ${date}, lastUpdBy = ? WHERE semesterID = ?`,
-    [semester.semesterName, semester.semesterType, semester.startDate, semester.endDate, semester.lastUpdBy, semesterID],
+    `UPDATE semesters SET semesterName = ?, semesterType = ?, startDate = ?, endDate = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE semesterID = ?`,
+    [semester.semesterName, semester.semesterType, semester.startDate, semester.endDate, semesterID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

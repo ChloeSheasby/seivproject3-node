@@ -1,15 +1,15 @@
 const sql = require('./db.js');
+const { getID } = require("../utils/utils.js")
 
 // constructor
 const Session = function(session) {
-  this.sessionID = session.sessionID,
   this.token = session.token,
   this.email = session.email,
   this.advisorID = session.advisorID,
   this.studentID = session.studentID,
   this.expirationDate = session.expirationDate,
-  this.lastUpdDate = new Date();
-  this.lastUpdBy = setUpdBy;
+  this.lastUpdDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  this.lastUpdBy = getID();
 };
 
 Session.create = (newSession, result) => {
@@ -112,11 +112,10 @@ Session.getSome = (start, length, result) => {
 };
 
 Session.updateById = (sessionID, session, result) => {
-    let date = new Date();
+    let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
     sql.query(
-        `UPDATE sessions SET sessionID = ?, token = ?, email = ?, advisorID = ?, studentID = ?, expirationDate = ?, lastUpdDate = ${date}, lastUpdBy = ${setUpdBy} WHERE sessionID = ?`,
+        `UPDATE sessions SET token = ?, email = ?, advisorID = ?, studentID = ?, expirationDate = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE sessionID = ?`,
         [
-            session.sessionID,
             session.token,
             session.email,
             session.advisorID,

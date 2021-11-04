@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const { getID } = require("../utils/utils.js")
 
 // constructor
 const Course = function(course) {
@@ -9,8 +10,8 @@ const Course = function(course) {
   this.hours = course.hours;
   this.description = course.description;
   this.semesterTypes = course.semesterTypes;
-  this.lastUpdDate = new Date();
-  this.lastUpdBy = course.lastUpdBy;
+  this.lastUpdDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  this.lastUpdBy = getID();
 };
 
 Course.create = (newCourse, result) => {
@@ -86,11 +87,11 @@ Course.getSome = (start, length, result) => {
 };
 
 Course.updateById = (courseID, course, result) => {
-  let date = new Date();
+  let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    `UPDATE courses SET courseName = ?, courseNum = ?, dept = ?, level = ?, hours = ?, description = ?, semesterTypes = ?, lastUpdDate = ?, lastUpdBy = ${setUpdBy} WHERE courseID = ?`,
+    `UPDATE courses SET courseName = ?, courseNum = ?, dept = ?, level = ?, hours = ?, description = ?, semesterTypes = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE courseID = ?`,
     //TODO - Update this!!!
-    [course.courseName, course.courseNum, course.dept, course.level, course.hours, course.description, course.semesterTypes, course.lastUpdBy, courseID],
+    [course.courseName, course.courseNum, course.dept, course.level, course.hours, course.description, course.semesterTypes, courseID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
