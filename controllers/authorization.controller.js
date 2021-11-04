@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
                         foundUser = true;
                     }
 
-                    let findExpirationDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                    let findExpirationDate = new Date();
                     findExpirationDate.setDate(findExpirationDate.getDate() + 1);
                     const session = {
                         token : token,
@@ -59,7 +59,7 @@ exports.login = async (req, res) => {
                         advisorID : user.advisorID,
                         studentID : user.studentID,
                         expirationDate : findExpirationDate,
-                        lastUpdBy : getID(),
+                        lastUpdBy : user.userID,
                         lastUpdDate : new Date().toISOString().slice(0, 19).replace('T', ' ')
                     }
 
@@ -99,7 +99,7 @@ exports.login = async (req, res) => {
                 foundUser = true;
             }
 
-            let findExpirationDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            let findExpirationDate = new Date();
             findExpirationDate.setDate(findExpirationDate.getDate() + 1);
             const session = {
                 token : token,
@@ -107,7 +107,7 @@ exports.login = async (req, res) => {
                 advisorID : user.advisorID,
                 studentID : user.studentID,
                 expirationDate : findExpirationDate,
-                lastUpdBy : getID(),
+                lastUpdBy : user.userID,
                 lastUpdDate : new Date().toISOString().slice(0, 19).replace('T', ' ')
             }
 
