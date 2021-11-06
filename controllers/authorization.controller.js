@@ -3,7 +3,6 @@ const Student = require("../models/student.model.js");
 const Session = require("../models/session.model.js");
 var jwt = require('jsonwebtoken');
 const authconfig = require("../config/auth.config.js");
-const { getID } = require("../utils/utils.js")
 
 exports.login = async (req, res) => {
     const {OAuth2Client} = require('google-auth-library');
