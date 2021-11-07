@@ -15,6 +15,7 @@ exports.create = (req, res) => {
       lName: req.body.lName,
       email: req.body.email,
       dept: req.body.dept,
+      role: req.body.role,
       lastUpdDate: req.body.lastUpdDate,
       lastUpdBy: req.body.lastUpdBy
     });

@@ -12,7 +12,9 @@ exports.create = (req, res) => {
     // Create a Degree Course
     const degree_courses = new Degree_courses({
       degreeID: req.body.degreeID,
-      courseID: req.body.courseID
+      courseID: req.body.courseID,
+      lastUpdDate: req.body.lastUpdDate,
+      lastUpdBy: req.body.lastUpdBy
     });
   
     // Save Degree Course in the database

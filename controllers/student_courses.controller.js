@@ -15,7 +15,9 @@ exports.create = (req, res) => {
         courseID: req.body.courseID,
         semesterID: req.body.semesterID,
         grade: req.body.grade,
-        status: req.body.status
+        status: req.body.status,
+        lastUpdDate: req.body.lastUpdDate,
+        lastUpdBy: req.body.lastUpdBy
     });
   
     // Save Degree Course in the database

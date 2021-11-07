@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const { getID } = require("../utils/utils.js")
 
 // constructor
 const Advisor = function(advisor) {
@@ -6,8 +7,9 @@ const Advisor = function(advisor) {
   this.lName = advisor.lName;
   this.email = advisor.email;
   this.dept = advisor.dept;
-  this.lastUpdDate = advisor.lastUpdDate;
-  this.lastUpdBy = advisor.lastUpdBy;
+  this.role = advisor.role;
+  this.lastUpdDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  this.lastUpdBy = getID();
 };
 
 Advisor.create = (newAdvisor, result) => {
@@ -25,6 +27,25 @@ Advisor.create = (newAdvisor, result) => {
 
 Advisor.findById = (advisorID, result) => {
   sql.query(`SELECT * FROM advisors WHERE advisorID = ${advisorID}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found advisor: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found Advisor with the advisorID
+    result({ kind: "not_found" }, null);
+  });
+};
+
+Advisor.findByEmail = (email, result) => {
+  sql.query(`SELECT * FROM advisors WHERE email = "${email}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -83,10 +104,10 @@ Advisor.getSome = (start, length, result) => {
 };
 
 Advisor.updateById = (advisorID, advisor, result) => {
+  let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    "UPDATE advisors SET fName = ?, lName = ?, email = ?, dept = ?, lastUpdDate = ?, lastUpdBy = ? WHERE advisorID = ?",
-    //TODO - Update this!!!
-    [advisor.fName, advisor.lName, advisor.email, advisor.dept, advisor.lastUpdDate, advisor.lastUpdBy, advisorID],
+    `UPDATE advisors SET fName = ?, lName = ?, email = ?, dept = ?, role = ?, lastUpdDate = '${date}', lastUpdBy = '${getID()}' WHERE advisorID = ?`,
+    [advisor.fName, advisor.lName, advisor.email, advisor.dept, advisor.role, advisorID],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
