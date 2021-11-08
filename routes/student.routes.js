@@ -9,7 +9,7 @@ module.exports = app => {
     app.get("/api/students", [authenticate, isAdminOrAdvisor], students.findSome);
   
     // Retrieve a single Student with studentID
-    app.get("/api/students/:studentID", [authenticate, isAdminOrAdvisor], students.findOne);
+    app.get("/api/students/:studentID", [authenticate, isAny], students.findOne);
 
     // Retrieve students for a specific advisor
     app.get("/api/students/advisor/:advisorID", [authenticate, isAdminOrAdvisor], students.findForAdvisor);
