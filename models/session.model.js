@@ -114,7 +114,7 @@ Session.getSome = (start, length, result) => {
 Session.updateById = (sessionID, session, result) => {
     let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
     sql.query(
-        `UPDATE sessions SET token = ?, email = ?, advisorID = ?, studentID = ?, expirationDate = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE sessionID = ?`,
+        `UPDATE sessions SET token = ?, email = ?, advisorID = ?, studentID = ?, expirationDate = ?, lastUpdDate = '${date}', lastUpdBy = '${getID()}' WHERE sessionID = ?`,
         [
             session.token,
             session.email,

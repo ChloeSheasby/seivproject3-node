@@ -84,7 +84,7 @@ Degree_courses.getSome = (start, length, result) => {
 Degree_courses.updateById = (degreeCourseID, degree_courses, result) => {
   let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    `UPDATE degree_courses SET degreeID = ?, courseID = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE degreeCourseID = ?`,
+    `UPDATE degree_courses SET degreeID = ?, courseID = ?, lastUpdDate = '${date}', lastUpdBy = '${getID()}' WHERE degreeCourseID = ?`,
     [degree_courses.degreeID, degree_courses.courseID, degreeCourseID],
     (err, res) => {
       if (err) {
