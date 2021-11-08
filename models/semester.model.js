@@ -86,7 +86,7 @@ Semester.getSome = (start, length, result) => {
 Semester.updateById = (semesterID, semester, result) => {
   let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    `UPDATE semesters SET semesterName = ?, semesterType = ?, startDate = ?, endDate = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE semesterID = ?`,
+    `UPDATE semesters SET semesterName = ?, semesterType = ?, startDate = ?, endDate = ?, lastUpdDate = '${date}', lastUpdBy = '${getID()}' WHERE semesterID = ?`,
     [semester.semesterName, semester.semesterType, semester.startDate, semester.endDate, semesterID],
     (err, res) => {
       if (err) {

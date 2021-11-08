@@ -119,7 +119,7 @@ Student.getSome = (start, length, result) => {
 Student.updateById = (studentID, student, result) => {
   let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   sql.query(
-    `UPDATE students SET degreeID = ?, advisorID = ?, fName = ?, lName = ?, email = ?, lastUpdDate = '${date}', lastUpdBy = ${getID()} WHERE studentID = ?`,
+    `UPDATE students SET degreeID = ?, advisorID = ?, fName = ?, lName = ?, email = ?, lastUpdDate = '${date}', lastUpdBy = '${getID()}' WHERE studentID = ?`,
     [student.degreeID, student.advisorID, student.fName, student.lName, student.email, studentID],
     (err, res) => {
       if (err) {
