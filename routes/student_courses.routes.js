@@ -6,7 +6,7 @@ module.exports = app => {
     app.post("/api/student_courses", [authenticate, isAny], student_courses.create);
   
     // Retrieve all Student Courses
-    app.get("/api/student_courses", [authenticate, isAdminOrAdvisor], student_courses.findSome);
+    app.get("/api/student_courses", [authenticate, isAny], student_courses.findSome);
   
     // Retrieve a single Student Course with studentCourseID
     app.get("/api/student_courses/:studentCourseID", [authenticate, isAny], student_courses.findOne);
