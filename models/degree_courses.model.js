@@ -54,9 +54,25 @@ Degree_courses.getAll = result => {
   });
 };
 
+Degree_courses.getAllForDegree = (degreeID, result) => {
+  sql.query(`SELECT * from degree_courses, courses, degrees WHERE ` 
+            + `(degree_courses.courseID = courses.courseID) AND (degree_courses.degreeID = degrees.degreeID) `
+            + `AND (degree_courses.degreeID = ${degreeID})`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log("degree_courses: ", res);
+    result(null, res);
+  });
+};
+
 Degree_courses.getSome = (start, length, result) => {
   if(start == null) {
-    sql.query("SELECT * FROM degree_courses", (err, res) => {
+    sql.query("SELECT * from degree_courses, courses, degrees WHERE " 
+    + "(degree_courses.courseID = courses.courseID) AND (degree_courses.degreeID = degrees.degreeID) ", (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(null, err);

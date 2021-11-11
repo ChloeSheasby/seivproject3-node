@@ -45,7 +45,23 @@ Student_courses.findById = (studentCourseID, result) => {
 };
 
 Student_courses.getAll = result => {
-  sql.query("SELECT * FROM student_courses", (err, res) => {
+  sql.query("SELECT * from student_courses, courses, semesters WHERE " 
+          + "(student_courses.courseID = courses.courseID) AND (student_courses.semesterID = semesters.semesterID)", (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log("student_courses: ", res);
+    result(null, res);
+  });
+};
+
+Student_courses.getAllForStudent = (studentID, result) => {
+  sql.query(`SELECT * from student_courses, courses, semesters WHERE ` 
+            + `(student_courses.courseID = courses.courseID) AND (student_courses.semesterID = semesters.semesterID) `
+            + `AND (student_courses.studentID = ${studentID})`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -59,7 +75,9 @@ Student_courses.getAll = result => {
 
 Student_courses.getSome = (start, length, result) => {
   if(start == null) {
-    sql.query("SELECT * FROM student_courses", (err, res) => {
+    sql.query("SELECT * from student_courses, courses, semesters, students WHERE " 
+    + "(student_courses.courseID = courses.courseID) AND (student_courses.semesterID = semesters.semesterID) "
+    + "AND (student_courses.studentID = students.studentID)", (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(null, err);

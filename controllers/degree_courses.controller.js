@@ -52,6 +52,18 @@ exports.findSome = (req, res) => {
   });
 };
 
+// retrieve all degree courses for one degree
+exports.findAllForDegree = (req, res) => {
+  Degree_courses.getAllForDegree(req.params.degreeID, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving Degree Courses."
+      });
+    else res.send(data);
+  });
+};
+
 // Find a single Degree Course with a degreeCourseID
 exports.findOne = (req, res) => {
     Degree_courses.findById(req.params.degreeCourseID, (err, data) => {

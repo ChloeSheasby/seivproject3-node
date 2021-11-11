@@ -7,6 +7,9 @@ module.exports = app => {
   
     // Retrieve all Degree Courses
     app.get("/api/degree_courses", [authenticate, isAny], degree_courses.findSome);
+
+    // Retrieve all Degree Courses for degree
+    app.get("/api/degree_courses/degree/:degreeID", [authenticate, isAny], degree_courses.findAllForDegree);
   
     // Retrieve a single Degree Course with degreeCourseID
     app.get("/api/degree_courses/:degreeCourseID", [authenticate, isAny], degree_courses.findOne);
