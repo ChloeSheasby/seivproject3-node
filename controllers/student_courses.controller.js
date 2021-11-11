@@ -43,6 +43,18 @@ exports.findAll = (req, res) => {
     });
   };
 
+  // retrieve all student courses for one student
+  exports.findAllForStudent = (req, res) => {
+    Student_courses.getAllForStudent(req.params.studentID, (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Student Courses."
+        });
+      else res.send(data);
+    });
+  };
+
 // Retrieve all Degree Courses from the database.
 exports.findSome = (req, res) => {
   Student_courses.getSome(req.query.start, req.query.length, (err, data) => {
